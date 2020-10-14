@@ -7,39 +7,28 @@ window.onload = async function () {
 
     // Chargement des données
     let data = await d3.tsv(source);
-    
     let container = d3.select('#container');
-    container.classed('striped', true)
 
-    container
-    //Selection virtuelle des elements
-    .selectAll('div')
-    //Affectation des données
-    .data(data)
-    //Accès aux nouvelles données à afficher
+    // En-tête du tableau
+    let thead = container.append('thead').classed('thead-dark', true).append('tr');
+
+    // On peut enter car on ne fait qu'ajouter des choses
+    thead.selectAll('th').data(data.columns).enter().append('th').text((d) => d);
+
+    // Corps du tableau
+    let tbody = container.append('tbody');
+    let tr = tbody.selectAll('tr').data(data).enter().append('tr');
+    
+    let td = tr
+    .selectAll('td')
+    .data( (dataTr) => Object.values(dataTr) )
     .enter()
-    //Création d'un nouvel élément du dom
-    .append('div')
-    .classed('list-group-item', true)
-    //Ajout du contenu texte de cet élément
-    .text( (data) => data.Name);
+    .append('td')
+    .text(d => d);
+
+    //tr.selectAll('td').text( (data) => data.Name).append('td');
 
     document.querySelector("#btn-larger-data").addEventListener('click', async () => {
-        source = './data/large-data.tsv';
-        data = await d3.tsv(source);
-
-        // Association des données chargées à des div virtuelles
-        // Le enter, update et exit sont chargés à cette étape
-        let selection = container.selectAll('div').data(data)
-
         
-        selection.enter() // La selection enter comporte les nouveaux éléments devant être générés
-        .append('div') // On ajoute un div dans le dom pour chacun de ces éléments
-        .merge(selection) // Sans cela, la modificiation du texte ne concerne que les nouveaux éléments
-        .text( (data) => data.Name)
-
-        // Si dans le bloc d'au dessus on ne fait pas de merge, il faut décommenter ceci
-        // Pour actualiser toute la liste
-        //selection.text( (data) => data.Name )
     })
 }
