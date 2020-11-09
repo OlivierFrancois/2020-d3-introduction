@@ -29,6 +29,16 @@ window.onload = async function () {
     //tr.selectAll('td').text( (data) => data.Name).append('td');
 
     document.querySelector("#btn-larger-data").addEventListener('click', async () => {
+        data = await d3.tsv('./data/large-data.tsv')
         
+        let tbody = container.append('tbody');
+        let tr = tbody.selectAll('tr').data(data).enter().append('tr');
+        
+        let td = tr
+        .selectAll('td')
+        .data( (dataTr) => Object.values(dataTr) )
+        .enter()
+        .append('td')
+        .text(d => d);
     })
 }
