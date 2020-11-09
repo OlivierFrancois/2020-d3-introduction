@@ -9,6 +9,10 @@ window.onload = async function () {
     let data = await d3.tsv(source);
     let container = d3.select('#container');
 
+    let dataHeader = data.columns.filter(item => {
+        return (item != 'CodeID') && (item != 'TeamID');
+    });
+
     // En-tête du tableau
     let thead = container.append('thead').classed('thead-dark', true).append('tr');
 
@@ -22,12 +26,20 @@ window.onload = async function () {
     let cells = lines.selectAll('td')
     // Prend la data contenue dans le tr et en extrait les valeurs
     // pour faire autant de td qu'il y a de couples clés/valeurs
-    .data( (dataTr) => Object.values(dataTr) )
+    .data( (dataTr) => {
+        let temp = [];
+        for (const key in dataTr) {
+            if (key != 'CodeID' && key != 'TeamID') {
+                temp.push(dataTr[key]);
+            }
+        }
+        return temp;
+    })
     .enter().append('td')
     .text(d => d);
 
     // Contenu du thead (doit être après la déclaration des lines pour être cliquable)
-    thead.selectAll('th').data(data.columns)
+    thead.selectAll('th').data(dataHeader)
     .enter().append('th')
     .text(d => d)
     .on('click', function (d, i, elts) {
