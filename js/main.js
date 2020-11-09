@@ -12,11 +12,6 @@ window.onload = async function () {
     // En-tête du tableau
     let thead = container.append('thead').classed('thead-dark', true).append('tr');
 
-    // On peut enter car on ne fait qu'ajouter des choses
-    thead.selectAll('th').data(data.columns)
-    .enter().append('th')
-    .text((d) => d);
-
     // Corps du tableau
     let tbody = container.append('tbody');
     // .data(data) permet de créer autant de tr qu'il y a de ligne dans le tableau data
@@ -31,6 +26,16 @@ window.onload = async function () {
     .enter().append('td')
     .text(d => d);
 
+    // Contenu du thead (doit être après la déclaration des lines pour être cliquable)
+    thead.selectAll('th').data(data.columns)
+    .enter().append('th')
+    .text(d => d)
+    .on('click', function (d, i, elts) {
+        // console.log(this)
+        lines.sort(function (a, b) {
+            return (d === 'No' || d === 'ID') ? d3.ascending(+a[d], +b[d]) : d3.ascending(a[d], b[d]);
+        });
+    });
 
     //------------ Boutons ------------//
 
